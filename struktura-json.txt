@@ -1,0 +1,14 @@
+Json(
+	weather=[Weather(
+		main=Clouds, 
+		description=broken clouds, 
+		icon=04d)], 
+	main=Main(
+		temp=280.23, 
+		feels_like=276.03, 
+		pressure=998, 
+		humidity=70), 
+	dt=1583511933, 
+	sys=Sun(
+		sunrise=1583471796, 
+		sunset=1583512430))

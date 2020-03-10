@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Weather</string>
+    <string name="hint_editTxtCity">Nazwa miasta</string>
 </resources>

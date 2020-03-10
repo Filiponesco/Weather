@@ -5,6 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface JsonWeatherHolderApi {
-    @GET("weather")
-    fun getCity(@Query("q") city: String, @Query("APPID") apiKey: String): Call<Json>
+    @GET("data/2.5/weather")
+    fun getCity(@Query("q") city: String, @Query("APPID") apiKey: String, @Query("units") units: String = "metric"): Call<Json>
 }
