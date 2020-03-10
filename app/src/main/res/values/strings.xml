@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Weather</string>
     <string name="hint_editTxtCity">Nazwa miasta</string>
+    <string name="feels_like">Oczuwalna: </string>
+    <string name="description">Opis</string>
+    <string name="date">Data</string>
+    <string name="sunrise">Wschód: </string>
+    <string name="sunset">Zachód: </string>
+    <string name="pressure">Ciśnienie: </string>
 </resources>

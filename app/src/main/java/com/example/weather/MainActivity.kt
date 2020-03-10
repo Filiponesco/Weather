@@ -64,18 +64,20 @@ class MainActivity : AppCompatActivity() {
             txtViewTemp.text = "0"
             return
         }
-        txtViewDate.text = convertTime(response.dt)
+        txtViewDate.text = convertTimeUnixToString(response.dt, "dd-MM HH:mm")
         txtViewDescription.text = response.weather[0].description
         txtViewTemp.text = response.main.temp.roundToInt().toString() + "°C"
-
         Glide.with(this@MainActivity)
             .load(URLIcon + response.weather[0].icon + "@2x.png")
             .fitCenter()
-            //.placeholder(R.mipmap.ic_nasa_foreground)
+            //.placeholder(R.mipmap.)
             .into(imgViewIcon)
+        txtViewSunrise.text = convertTimeUnixToString(response.sys.sunrise, "HH:mm")
+        txtViewSunset.text = convertTimeUnixToString(response.sys.sunset, "HH:mm")
+        txtViewPressure.text = response.main.pressure + "hPa"
     }
-    private fun convertTime(timeUnix: Long): String{
-        val sdf = java.text.SimpleDateFormat("dd-MM HH:mm")
+    private fun convertTimeUnixToString(timeUnix: Long, pattern: String): String{
+        val sdf = java.text.SimpleDateFormat(pattern)
         val date = java.util.Date(timeUnix * 1000)
         sdf.format(date)
         return sdf.format(date)
