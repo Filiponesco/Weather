@@ -154,22 +154,20 @@
             android:layout_height="wrap_content"
             app:liftOnScroll="true">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputCity"
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="30dp"
+            android:paddingTop="12dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+            <androidx.appcompat.widget.SearchView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:hint="@string/hint_editTxtCity"
-                app:endIconDrawable="@drawable/ic_search_gray_24dp"
-                app:endIconMode="custom"
-                app:errorEnabled="true"
-                app:helperTextEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="false" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:background="@color/white"
+                app:defaultQueryHint="text">
+            </androidx.appcompat.widget.SearchView>
+        </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

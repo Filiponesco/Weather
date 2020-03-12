@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         )
 
         // Icon's functionality.
-        textInputCity.setEndIconOnClickListener {
-            getCity(city)
-        }
+//        textInputCity.setEndIconOnClickListener {
+//            getCity(city)
+//        }
         // Error
         //textInputCity.error = "Brak takiego miasta"
     }
