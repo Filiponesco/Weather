@@ -1,5 +1,6 @@
 package com.example.weather
 
+import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.roundToInt
+import com.arlib.floatingsearchview.FloatingSearchView
+import com.google.gson.Gson
+import java.io.BufferedReader
+import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var jsonWeatherHolderApi: JsonWeatherHolderApi
@@ -30,6 +36,16 @@ class MainActivity : AppCompatActivity() {
         jsonWeatherHolderApi = retrofit.create(
             JsonWeatherHolderApi::class.java
         )
+        fetchCities()
+//        floating_search_view.setOnQueryChangeListener(FloatingSearchView.OnQueryChangeListener { oldQuery, newQuery ->
+//            //get suggestions based on newQuery
+//
+//
+//            //pass them on to the search view
+//            floating_search_view.swapSuggestions(newSuggestions)
+//        })
+
+
 
         // Icon's functionality.
 //        textInputCity.setEndIconOnClickListener {
@@ -81,6 +97,13 @@ class MainActivity : AppCompatActivity() {
         val date = java.util.Date(timeUnix * 1000)
         sdf.format(date)
         return sdf.format(date)
+    }
+    private fun fetchCities(){
+        val inputString = applicationContext.assets.open("city.list.json").bufferedReader().use{
+            it.readText()
+        }
+        //val cities = Gson().fromJson(inputString, Array<City>::class.java).toList()
+        //Log.e("JSON file", cities[0].toString())
     }
 
     companion object{
