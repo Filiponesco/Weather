@@ -1,5 +1,6 @@
 package com.example.weather
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +25,6 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
-
-
-
 
 class MainActivity : AppCompatActivity() {
     lateinit var jsonWeatherHolderApi: JsonWeatherHolderApi
@@ -63,37 +59,55 @@ class MainActivity : AppCompatActivity() {
 
         floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
-                val mLastCity = searchSuggestion.body
-                //Log.e("OnSuggestionClicked", mLastQuery)
+                val mLastCity: City = searchSuggestion as City
+                Log.e("OnSuggestionClicked", mLastCity.name)
+                getCityInfoByID(mLastCity.id)
+                floating_search_view.setSearchBarTitle(mLastCity.name)
+                floating_search_view.clearSearchFocus()
             }
 
             override fun onSearchAction(query: String) {
                 val mLastQuery = query
-
                 Log.e("OnSearchAction", mLastQuery)
+                floating_search_view.clearSearchFocus()
             }
         })
-        getCityInfo(city)
     }
     private fun getCityInfo(city: String){
         val call: Call<Json> = jsonWeatherHolderApi.getCity(city, API_KEY)
         call.enqueue(object: Callback<Json>{
             override fun onFailure(call: Call<Json>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "Coś poszło nie tak", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_SHORT).show()
                 Log.e("responseApiFailure", t.message)
             }
 
             override fun onResponse(call: Call<Json>, response: Response<Json>) {
                 if(!response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, "Brak odpowiedzi, code: " + response.code(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful + response.code(), Toast.LENGTH_LONG).show()
                     return
                 }
-                Toast.makeText(this@MainActivity, "odpowiedz: " + response.body()!!, Toast.LENGTH_LONG).show()
-                Log.e("responseApiCorrect", response.body()!!.toString())
                 setUI(response.body())
             }
         })
     }
+    private fun getCityInfoByID(id: Int){
+        val call: Call<Json> = jsonWeatherHolderApi.getCityByID(id, API_KEY)
+        call.enqueue(object: Callback<Json>{
+            override fun onFailure(call: Call<Json>, t: Throwable) {
+                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_SHORT).show()
+                Log.e("responseApiFailure", t.message)
+            }
+
+            override fun onResponse(call: Call<Json>, response: Response<Json>) {
+                if(!response.isSuccessful) {
+                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful + response.code(), Toast.LENGTH_LONG).show()
+                    return
+                }
+                setUI(response.body())
+            }
+        })
+    }
+    @SuppressLint("SetTextI18n")
     private fun setUI(response: Json?){
         if(response == null) {
             txtViewDate.text = "0"
@@ -103,15 +117,16 @@ class MainActivity : AppCompatActivity() {
         }
         txtViewDate.text = convertTimeUnixToString(response.dt, "dd-MM HH:mm")
         txtViewDescription.text = response.weather[0].description
-        txtViewTemp.text = response.main.temp.roundToInt().toString() + "°C"
+        txtViewTemp.text = "${response.main.temp.roundToInt()}"
+        txtViewSunrise.text = convertTimeUnixToString(response.sys.sunrise, "HH:mm")
+        txtViewSunset.text = convertTimeUnixToString(response.sys.sunset, "HH:mm")
+        txtViewPressure.text = "${response.main.pressure}"
+        txtViewFeelsLike.text = "${response.main.feels_like.roundToInt()}"
         Glide.with(this@MainActivity)
             .load(URLIcon + response.weather[0].icon + "@2x.png")
             .fitCenter()
             //.placeholder(R.mipmap.)
             .into(imgViewIcon)
-        txtViewSunrise.text = convertTimeUnixToString(response.sys.sunrise, "HH:mm")
-        txtViewSunset.text = convertTimeUnixToString(response.sys.sunset, "HH:mm")
-        txtViewPressure.text = response.main.pressure + "hPa"
     }
     private fun convertTimeUnixToString(timeUnix: Long, pattern: String): String{
         val sdf = java.text.SimpleDateFormat(pattern)
@@ -131,5 +146,7 @@ class MainActivity : AppCompatActivity() {
         const val API_KEY: String = "2c3a4150c327f165dd4e954b18ca56bf"
         const val URLIcon = "http://openweathermap.org/img/wn/"
         const val numberOfPrompt = 3
+        const val messageFailureApi = "Coś poszło nie tak"
+        const val messageResponseNoSuccessful = "Brak odpowiedzi. Kod: "
     }
 }
