@@ -120,8 +120,8 @@ class MainActivity : AppCompatActivity() {
         txtViewTemp.text = "${response.main.temp.roundToInt()}"
         txtViewSunrise.text = convertTimeUnixToString(response.sys.sunrise, "HH:mm")
         txtViewSunset.text = convertTimeUnixToString(response.sys.sunset, "HH:mm")
-        txtViewPressure.text = "${response.main.pressure}"
-        txtViewFeelsLike.text = "${response.main.feels_like.roundToInt()}"
+        txtViewPressure.text = "${response.main.pressure}$pascal"
+        txtViewFeelsLike.text = "${response.main.feels_like.roundToInt()}$celcius"
         Glide.with(this@MainActivity)
             .load(URLIcon + response.weather[0].icon + "@2x.png")
             .fitCenter()
@@ -148,5 +148,7 @@ class MainActivity : AppCompatActivity() {
         const val numberOfPrompt = 3
         const val messageFailureApi = "Coś poszło nie tak"
         const val messageResponseNoSuccessful = "Brak odpowiedzi. Kod: "
+        const val celcius = "°C"
+        const val pascal = "hPa"
     }
 }

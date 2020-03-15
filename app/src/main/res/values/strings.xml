@@ -13,4 +13,5 @@
     <string name="responseNoSuccessful">Brak odpowiedzi. Kod: </string>
     <string name="celsius">°C</string>
     <string name="pascal">hPa</string>
+    <string name="titleCard">Aktualne dane</string>
 </resources>
