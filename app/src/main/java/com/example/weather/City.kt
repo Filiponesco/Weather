@@ -1,3 +1,12 @@
 package com.example.weather
 
-data class City(val id: String, val name: String, val country: String)
+
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class City(var id: String, var name: String, var country: String): SearchSuggestion{
+    override fun getBody(): String {
+        return "$name, $country"
+    }
+}

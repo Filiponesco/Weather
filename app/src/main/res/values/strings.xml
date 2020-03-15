@@ -7,6 +7,6 @@
     <string name="sunrise">Wschód: </string>
     <string name="sunset">Zachód: </string>
     <string name="pressure">Ciśnienie: </string>
-    <string name="app_label">App label</string>
+    <string name="app_label">Wyszukiwanie</string>
     <string name="search_hint">Wyszukaj</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.weather
 
+import android.content.Intent
 import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,9 +15,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.roundToInt
 import com.arlib.floatingsearchview.FloatingSearchView
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.google.gson.Gson
-import java.io.BufferedReader
-import java.io.File
+import com.google.gson.stream.JsonReader
+import java.io.*
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,25 +47,35 @@ class MainActivity : AppCompatActivity() {
         jsonWeatherHolderApi = retrofit.create(
             JsonWeatherHolderApi::class.java
         )
-        fetchCities()
-//        floating_search_view.setOnQueryChangeListener(FloatingSearchView.OnQueryChangeListener { oldQuery, newQuery ->
-//            //get suggestions based on newQuery
-//
-//
-//            //pass them on to the search view
-//            floating_search_view.swapSuggestions(newSuggestions)
-//        })
+        val cities = getAllCities()
 
+        floating_search_view.setOnQueryChangeListener(FloatingSearchView.OnQueryChangeListener { oldQuery, newQuery ->
+            //get suggestions based on newQuery
+            if(newQuery.isNotEmpty()) {
+                val matchCities = cities.filter { it.name.contains(newQuery) }.take(numberOfPrompt)
+                //pass them on to the search view
+                floating_search_view.swapSuggestions(matchCities)
+            }
+            else{
+                floating_search_view.clearSuggestions()
+            }
+        })
 
+        floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
+            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
+                val mLastCity = searchSuggestion.body
+                //Log.e("OnSuggestionClicked", mLastQuery)
+            }
 
-        // Icon's functionality.
-//        textInputCity.setEndIconOnClickListener {
-//            getCity(city)
-//        }
-        // Error
-        //textInputCity.error = "Brak takiego miasta"
+            override fun onSearchAction(query: String) {
+                val mLastQuery = query
+
+                Log.e("OnSearchAction", mLastQuery)
+            }
+        })
+        getCityInfo(city)
     }
-    private fun getCity(city: String){
+    private fun getCityInfo(city: String){
         val call: Call<Json> = jsonWeatherHolderApi.getCity(city, API_KEY)
         call.enqueue(object: Callback<Json>{
             override fun onFailure(call: Call<Json>, t: Throwable) {
@@ -98,17 +119,17 @@ class MainActivity : AppCompatActivity() {
         sdf.format(date)
         return sdf.format(date)
     }
-    private fun fetchCities(){
-        val inputString = applicationContext.assets.open("city.list.json").bufferedReader().use{
-            it.readText()
-        }
-        //val cities = Gson().fromJson(inputString, Array<City>::class.java).toList()
-        //Log.e("JSON file", cities[0].toString())
+    private fun getAllCities(): List<City>{
+        val reader = applicationContext.assets.open("city.list.json").bufferedReader()
+        val cities = Gson().fromJson(reader, Array<City>::class.java).toList()
+        Log.e("JSON file", cities[0].toString())
+        return cities
     }
 
     companion object{
         const val URLOpenWeather: String = "http://api.openweathermap.org/"
         const val API_KEY: String = "2c3a4150c327f165dd4e954b18ca56bf"
         const val URLIcon = "http://openweathermap.org/img/wn/"
+        const val numberOfPrompt = 3
     }
 }
