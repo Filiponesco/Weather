@@ -215,8 +215,4 @@
         app:floatingSearch_searchBarMarginLeft="8dp"
         app:floatingSearch_searchBarMarginTop="12dp"
         app:floatingSearch_searchBarMarginRight="8dp"/>
-
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -25,15 +25,25 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.provider.Settings
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CallbackJson {
+    private lateinit var cities: List<City>
+
+    override fun onResponse(list: List<City>) {
+        //Log.e("responseJSONFile", list[0].toString())
+        cities = list
+        //floating_search_view.hideProgress()
+    }
+
     lateinit var jsonWeatherHolderApi: JsonWeatherHolderApi
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val city: String = "Katowice,pl"
 
         val retrofit = Retrofit.Builder()
             .baseUrl(URLOpenWeather)
@@ -43,7 +53,15 @@ class MainActivity : AppCompatActivity() {
         jsonWeatherHolderApi = retrofit.create(
             JsonWeatherHolderApi::class.java
         )
-        val cities = getAllCities()
+        floating_search_view.showProgress()
+        GlobalScope.launch {
+            cities = getCitiesSuspend()
+            floating_search_view.hideProgress()
+        }
+//        thread {
+//            getAllCities(this)
+//        }
+
 
         floating_search_view.setOnQueryChangeListener(FloatingSearchView.OnQueryChangeListener { oldQuery, newQuery ->
             //get suggestions based on newQuery
@@ -134,13 +152,18 @@ class MainActivity : AppCompatActivity() {
         sdf.format(date)
         return sdf.format(date)
     }
-    private fun getAllCities(): List<City>{
+    private fun getAllCities(listener: CallbackJson){
+        val reader = applicationContext.assets.open("city.list.json").bufferedReader()
+        val cities = Gson().fromJson(reader, Array<City>::class.java).toList()
+        Log.e("JSON file", cities[0].toString())
+        listener.onResponse(cities)
+    }
+    suspend fun getCitiesSuspend(): List<City>{
         val reader = applicationContext.assets.open("city.list.json").bufferedReader()
         val cities = Gson().fromJson(reader, Array<City>::class.java).toList()
         Log.e("JSON file", cities[0].toString())
         return cities
     }
-
     companion object{
         const val URLOpenWeather: String = "http://api.openweathermap.org/"
         const val API_KEY: String = "2c3a4150c327f165dd4e954b18ca56bf"
@@ -151,4 +174,7 @@ class MainActivity : AppCompatActivity() {
         const val celcius = "°C"
         const val pascal = "hPa"
     }
+}
+interface CallbackJson{
+    fun onResponse(list: List<City>)
 }
