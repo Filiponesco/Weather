@@ -8,6 +8,10 @@ interface JsonWeatherHolderApi {
     @GET("data/2.5/weather")
     fun getCity(@Query("q") city: String, @Query("APPID") apiKey: String, @Query("units") units: String = "metric"): Call<Json>
     @GET("data/2.5/weather")
-    fun getCityByID(@Query("id") id: Int, @Query("APPID") apiKey: String, @Query("units") units: String = "metric"): Call<Json>
+    fun getCityByID(
+        @Query("id") id: Int,
+        @Query("APPID") apiKey: String,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pl"): Call<Json>
 
 }
