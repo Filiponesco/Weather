@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/lowpoly_day">
+    android:background="@drawable/lowpoly_day_prepare">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,13 +33,32 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/halfLeft"
+                android:id="@+id/halfRight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/imgViewIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    app:srcCompat="@drawable/example_icon_weather" />
+
+                <TextView
+                    android:id="@+id/txtViewDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/description"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -59,38 +78,9 @@
                         android:layout_gravity="start"
                         android:paddingTop="33dp"
                         android:text="@string/celsius"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
+                        android:textSize="40dp" />
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/halfRight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imgViewIcon"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:scaleX="1.3"
-                    android:scaleY="1.3"
-                    app:srcCompat="@drawable/example_icon_weather" />
-
-                <TextView
-                    android:id="@+id/txtViewDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:text="@string/description"
-                    android:textAlignment="center"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -102,6 +92,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="12dp"
         android:clickable="false"
+        app:cardBackgroundColor="#EEFFFFFF"
         app:cardElevation="4dp"
         app:contentPadding="12dp">
 
@@ -115,6 +106,7 @@
                 android:id="@+id/lblTitleCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
                 android:text="@string/titleCard"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textStyle="bold" />
