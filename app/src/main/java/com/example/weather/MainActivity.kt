@@ -32,6 +32,7 @@ import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     lateinit var jsonWeatherHolderApi: JsonWeatherHolderApi
+    private var activeCityID = IDCityOnStart
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,29 +44,16 @@ class MainActivity : AppCompatActivity() {
         getCityInfoByID(IDCityOnStart) //data city on start APP
 
         floating_search_view.showProgress() //inform user: loading json file with city ID
+        swipeRefresh.setOnRefreshListener {
+            getCityInfoByID(activeCityID)
+            swipeRefresh.isRefreshing = false
+        }
         GlobalScope.launch(Dispatchers.Main){
             val cities = getAllCities() //async
             floating_search_view.hideProgress()
             setOnQueryChangeListenerSearchBox(cities)
             setOnClickSuggestionSearchBox()
         }
-    }
-    private fun getCityInfo(city: String){
-        val call: Call<Json> = jsonWeatherHolderApi.getCity(city, API_KEY)
-        call.enqueue(object: Callback<Json>{
-            override fun onFailure(call: Call<Json>, t: Throwable) {
-                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_LONG).show()
-                Log.e("responseApiFailure", t.message)
-            }
-
-            override fun onResponse(call: Call<Json>, response: Response<Json>) {
-                if(!response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful + response.code(), Toast.LENGTH_LONG).show()
-                    return
-                }
-                setUI(response.body())
-            }
-        })
     }
     private fun getCityInfoByID(id: Int){
         val call: Call<Json> = jsonWeatherHolderApi.getCityByID(id, API_KEY)
@@ -102,10 +90,11 @@ class MainActivity : AppCompatActivity() {
         txtViewPressure.text = "${response.main.pressure}$pascal"
         txtViewFeelsLike.text = "${response.main.feels_like.roundToInt()}$celcius"
         floating_search_view.setSearchBarTitle("${response.name}, ${response.sys.country}")
+        activeCityID = response.id
         Glide.with(this@MainActivity)
             .load(URLIcon + response.weather[0].icon + "@2x.png")
             .fitCenter()
-            //.placeholder(R.mipmap.)
+            //.placeholder()
             .into(imgViewIcon)
     }
     private fun convertTimeUnixToString(timeUnix: Long, pattern: String): String{
@@ -162,12 +151,10 @@ class MainActivity : AppCompatActivity() {
     }
     fun changeVisibleUI(visible: Boolean){
         if(visible){
-            floating_search_view.visibility = View.VISIBLE
             cardViewExtraData.visibility = View.VISIBLE
             linearLayoutContentUp.visibility = View.VISIBLE
         }
         else{
-            floating_search_view.visibility = View.INVISIBLE
             cardViewExtraData.visibility = View.INVISIBLE
             linearLayoutContentUp.visibility = View.INVISIBLE
         }
