@@ -1,6 +1,7 @@
 package com.example.weather
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.os.Parcelable
 import android.provider.Settings
 import android.view.View
 import kotlinx.coroutines.*
@@ -32,27 +34,40 @@ import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     lateinit var jsonWeatherHolderApi: JsonWeatherHolderApi
-    private var activeCityID = IDCityOnStart
     override fun onCreate(savedInstanceState: Bundle?) {
+        chooseTheme(Data.activeCity?.main?.temp?.roundToInt())
+        setTheme(AppSetings.theme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        changeVisibleUI(false)
-        progressBarLoadingContent.visibility = View.VISIBLE
 
         buildRetrofit()
-
-        getCityInfoByID(IDCityOnStart) //data city on start APP
-
-        floating_search_view.showProgress() //inform user: loading json file with city ID
-        swipeRefresh.setOnRefreshListener {
-            getCityInfoByID(activeCityID)
-            swipeRefresh.isRefreshing = false
+        if(AppSetings.createFirstTime){
+            changeVisibleUI(false)
+            progressBarLoadingContent.visibility = View.VISIBLE
+            getCityInfoByID(IDCityOnStart)
+            AppSetings.createFirstTime = false
         }
-        GlobalScope.launch(Dispatchers.Main){
-            val cities = getAllCities() //async
-            floating_search_view.hideProgress()
-            setOnQueryChangeListenerSearchBox(cities)
-            setOnClickSuggestionSearchBox()
+        else {
+            changeVisibleUI(true)
+            setUI(Data.activeCity)
+            progressBarLoadingContent.visibility = View.GONE
+            //next time do it with service
+            if (Data.cities.isEmpty()) { //parsing JSON only first time
+                GlobalScope.launch(Dispatchers.Main) {
+                    floating_search_view.showProgress() //inform user: loading json file with city ID
+                    Data.cities = getAllCities() //async
+                    floating_search_view.hideProgress()
+                    setOnQueryChangeListenerSearchBox(Data.cities)
+                    setOnClickSuggestionSearchBox()
+                }
+            } else {
+                setOnQueryChangeListenerSearchBox(Data.cities)
+                setOnClickSuggestionSearchBox()
+            }
+        }
+        swipeRefresh.setOnRefreshListener {
+            getCityInfoByID(Data.activeCity?.id ?: IDCityOnStart)
+            swipeRefresh.isRefreshing = false
         }
     }
     private fun getCityInfoByID(id: Int){
@@ -62,15 +77,15 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_SHORT).show()
                 Log.e("responseApiFailure", t.message)
             }
-
             override fun onResponse(call: Call<Json>, response: Response<Json>) {
                 if(!response.isSuccessful) {
                     Toast.makeText(this@MainActivity, messageResponseNoSuccessful + response.code(), Toast.LENGTH_LONG).show()
                     return
                 }
-                setUI(response.body())
-                progressBarLoadingContent.visibility = View.GONE
-                changeVisibleUI(true)
+                Data.activeCity = response.body()
+                val i = Intent(this@MainActivity, MainActivity::class.java)
+                startActivity(i)
+                finish()
             }
         })
     }
@@ -90,11 +105,10 @@ class MainActivity : AppCompatActivity() {
         txtViewPressure.text = "${response.main.pressure}$pascal"
         txtViewFeelsLike.text = "${response.main.feels_like.roundToInt()}$celcius"
         floating_search_view.setSearchBarTitle("${response.name}, ${response.sys.country}")
-        activeCityID = response.id
         Glide.with(this@MainActivity)
             .load(URLIcon + response.weather[0].icon + "@2x.png")
             .fitCenter()
-            //.placeholder()
+            .placeholder(R.drawable.example_icon_weather)
             .into(imgViewIcon)
     }
     private fun convertTimeUnixToString(timeUnix: Long, pattern: String): String{
@@ -157,6 +171,18 @@ class MainActivity : AppCompatActivity() {
         else{
             cardViewExtraData.visibility = View.INVISIBLE
             linearLayoutContentUp.visibility = View.INVISIBLE
+        }
+    }
+    private fun chooseTheme(temp: Int?){
+        if(temp != null) {
+            when {
+                temp >= 25 -> AppSetings.theme = R.style.AppThemeHot
+                temp >= 15 -> AppSetings.theme = R.style.AppThemeNormal
+                else -> AppSetings.theme = R.style.AppThemeCold
+            }
+        }
+        else{
+            AppSetings.theme = R.style.AppThemeNormal
         }
     }
     companion object{

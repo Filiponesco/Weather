@@ -1,14 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="AppThemeCold" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryCold</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkCold</item>
+        <item name="colorAccent">@color/colorAccentCold</item>
+        <item name="android:textColor">@color/textMain</item>
+        <item name="materialCardViewStyle">@style/CardViewCold</item>
+        <item name="android:windowBackground">@drawable/bg_gradient_cold</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppThemeNormal" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/textMain</item>
+        <item name="materialCardViewStyle">@style/CardViewNormal</item>
+        <item name="android:windowBackground">@drawable/bg_gradient_normal</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
+
+    <style name="AppThemeHot" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryHot</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkHot</item>
+        <item name="colorAccent">@color/colorAccentHot</item>
+        <item name="android:textColor">@color/textMain</item>
+        <item name="materialCardViewStyle">@style/CardViewHot</item>
+        <item name="android:windowBackground">@drawable/bg_gradient_hot</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+
+    <style name="CardViewCold" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/colorPrimaryDarkCold</item>
+    </style>
+    <style name="CardViewNormal" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/colorPrimaryDark</item>
+    </style>
+    <style name="CardViewHot" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/colorPrimaryDarkHot</item>
+    </style>
+
+
+
     <style name="TextAppearance.MyApp.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
         <item name="android:textSize">110dp</item>
     </style>
@@ -16,4 +55,8 @@
         <item name="android:textSize">120dp</item>
     </style>
 
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 </resources>

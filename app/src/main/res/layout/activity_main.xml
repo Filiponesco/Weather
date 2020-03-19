@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
-    android:background="@drawable/lowpoly_day_prepare">
+    tools:context=".MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -18,11 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
 
                 <LinearLayout
                     android:id="@+id/linearLayoutContentUp"
@@ -36,7 +30,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/date"
-                        android:textColor="#FFF"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -83,11 +76,10 @@
 
                             <ImageView
                                 android:id="@+id/imgViewIcon"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end"
-                                android:layout_marginTop="15dp"
-                                app:srcCompat="@drawable/example_icon_weather" />
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="15dp" />
 
                             <TextView
                                 android:id="@+id/txtViewDescription"
@@ -102,7 +94,6 @@
 
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         <com.google.android.material.card.MaterialCardView
@@ -114,7 +105,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="12dp"
             android:clickable="false"
-            app:cardBackgroundColor="#EEFFFFFF"
             app:cardElevation="4dp"
             app:contentPadding="12dp">
 
@@ -217,14 +207,16 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="80dp">
-            </androidx.appcompat.widget.Toolbar>
+                android:paddingTop="80dp"/>
         </com.google.android.material.appbar.AppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -247,5 +239,5 @@
             app:floatingSearch_leftActionMode="showSearch"
             app:floatingSearch_searchBarMarginLeft="8dp"
             app:floatingSearch_searchBarMarginRight="8dp"
-            android:layout_marginTop="11dp" />
+            app:floatingSearch_searchBarMarginTop="12dp"/>
 </RelativeLayout>
