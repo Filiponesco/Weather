@@ -43,51 +43,18 @@ class MainActivity : AppCompatActivity() {
         buildRetrofit()
         if(AppSetings.createFirstTime){
             changeVisibleUI(false)
-            progressBarLoadingContent.visibility = View.VISIBLE
-            getCityInfoByID(IDCityOnStart)
+            getCityInfoByName(NameCityOnStart)
             AppSetings.createFirstTime = false
         }
         else {
-            changeVisibleUI(true)
             setUI(Data.activeCity)
-            progressBarLoadingContent.visibility = View.GONE
-            //next time do it with service
-            if (Data.cities.isEmpty()) { //parsing JSON only first time
-                GlobalScope.launch(Dispatchers.Main) {
-                    floating_search_view.showProgress() //inform user: loading json file with city ID
-                    Data.cities = getAllCities() //async
-                    floating_search_view.hideProgress()
-                    setOnQueryChangeListenerSearchBox(Data.cities)
-                    setOnClickSuggestionSearchBox()
-                }
-            } else {
-                setOnQueryChangeListenerSearchBox(Data.cities)
-                setOnClickSuggestionSearchBox()
-            }
+            changeVisibleUI(true)
         }
         swipeRefresh.setOnRefreshListener {
-            getCityInfoByID(Data.activeCity?.id ?: IDCityOnStart)
+            getCityInfoByName(Data.activeCity?.name ?: NameCityOnStart)
             swipeRefresh.isRefreshing = false
         }
-    }
-    private fun getCityInfoByID(id: Int){
-        val call: Call<Json> = jsonWeatherHolderApi.getCityByID(id, API_KEY)
-        call.enqueue(object: Callback<Json>{
-            override fun onFailure(call: Call<Json>, t: Throwable) {
-                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_SHORT).show()
-                Log.e("responseApiFailure", t.message)
-            }
-            override fun onResponse(call: Call<Json>, response: Response<Json>) {
-                if(!response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful + response.code(), Toast.LENGTH_LONG).show()
-                    return
-                }
-                Data.activeCity = response.body()
-                val i = Intent(this@MainActivity, MainActivity::class.java)
-                startActivity(i)
-                finish()
-            }
-        })
+        setOnClickSuggestionSearchBox()
     }
     @SuppressLint("SetTextI18n")
     private fun setUI(response: Json?){
@@ -117,42 +84,6 @@ class MainActivity : AppCompatActivity() {
         sdf.format(date)
         return sdf.format(date)
     }
-    private suspend fun getAllCities(): List<City>{
-        return GlobalScope.async(Dispatchers.IO) {
-            val reader = applicationContext.assets.open("city.list.json").bufferedReader()
-            val cities = Gson().fromJson(reader, Array<City>::class.java).toList()
-            Log.e("JSON file", cities[0].toString())
-            return@async cities
-        }.await()
-    }
-    private fun setOnQueryChangeListenerSearchBox(cities: List<City>){
-        floating_search_view.setOnQueryChangeListener(FloatingSearchView.OnQueryChangeListener { oldQuery, newQuery ->
-            //get suggestions based on newQuery
-            if(newQuery.isNotEmpty()) {
-                val matchCities = cities.filter { it.name.contains(newQuery) }.take(numberOfPrompt)
-                //pass them on to the search view
-                floating_search_view.swapSuggestions(matchCities)
-            }
-            else{
-                floating_search_view.clearSuggestions()
-            }
-        })
-    }
-    private fun setOnClickSuggestionSearchBox(){
-        floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
-            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
-                val mLastCity: City = searchSuggestion as City
-                Log.e("OnSuggestionClicked", mLastCity.toString())
-                getCityInfoByID(mLastCity.id)
-                floating_search_view.clearSearchFocus()
-            }
-            override fun onSearchAction(query: String) {
-                val mLastQuery = query
-                Log.e("OnSearchAction", mLastQuery)
-                floating_search_view.clearSearchFocus()
-            }
-        })
-    }
     private fun buildRetrofit(){
         val retrofit = Retrofit.Builder()
             .baseUrl(URLOpenWeather)
@@ -165,10 +96,12 @@ class MainActivity : AppCompatActivity() {
     }
     fun changeVisibleUI(visible: Boolean){
         if(visible){
+            progressBarLoadingContent.visibility = View.GONE
             cardViewExtraData.visibility = View.VISIBLE
             linearLayoutContentUp.visibility = View.VISIBLE
         }
         else{
+            progressBarLoadingContent.visibility = View.VISIBLE
             cardViewExtraData.visibility = View.INVISIBLE
             linearLayoutContentUp.visibility = View.INVISIBLE
         }
@@ -185,15 +118,49 @@ class MainActivity : AppCompatActivity() {
             AppSetings.theme = R.style.AppThemeNormal
         }
     }
+    private fun getCityInfoByName(city: String){
+        val call: Call<Json> = jsonWeatherHolderApi.getCity(city, API_KEY)
+        call.enqueue(object: Callback<Json>{
+
+            override fun onFailure(call: Call<Json>, t: Throwable) {
+                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_LONG).show()
+                Log.e("ApiFailure", t.message)
+                changeVisibleUI(false)
+            }
+
+            override fun onResponse(call: Call<Json>, response: Response<Json>) {
+                if(!response.isSuccessful) {
+                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful, Toast.LENGTH_LONG).show()
+                    Log.e("ApiNoSuccessful", response.code().toString())
+                    return
+                }
+                Data.activeCity = response.body()
+                val i = Intent(this@MainActivity, MainActivity::class.java)
+                startActivity(i)
+                finish()
+            }
+        })
+    }
+    private fun setOnClickSuggestionSearchBox(){
+        floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
+            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
+                // no suggestion because it is too slow
+            }
+            override fun onSearchAction(query: String) {
+                Log.e("OnSearchAction", query)
+                changeVisibleUI(false)
+                getCityInfoByName(query)
+            }
+        })
+    }
     companion object{
         const val URLOpenWeather: String = "http://api.openweathermap.org/"
         const val API_KEY: String = "2c3a4150c327f165dd4e954b18ca56bf"
         const val URLIcon = "http://openweathermap.org/img/wn/"
-        const val numberOfPrompt = 3
         const val messageFailureApi = "Coś poszło nie tak, włącz internet"
-        const val messageResponseNoSuccessful = "Brak odpowiedzi. Kod: "
+        const val messageResponseNoSuccessful = "Nie znaleziono takiego miasta."
         const val celcius = "°C"
         const val pascal = "hPa"
-        const val IDCityOnStart = 3086800
+        const val NameCityOnStart = "katowice,pl"
     }
 }
