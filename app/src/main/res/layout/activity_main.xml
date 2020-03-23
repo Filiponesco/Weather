@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parent_view"
+    android:id="@+id/relativeLayoutAll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -18,84 +18,85 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <LinearLayout
-                    android:id="@+id/linearLayoutContentUp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+            <LinearLayout
+                android:id="@+id/linearLayoutContentUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/txtViewDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/date"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/txtViewDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:id="@+id/main"
+                        android:id="@+id/halfLeft"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:id="@+id/halfLeft"
+                        <TextView
+                            android:id="@+id/txtViewTemp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10"
+                            android:textAppearance="@style/TextAppearance.MyApp.Headline1" />
+
+                        <TextView
+                            android:id="@+id/LblUnitMain"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:paddingTop="25dp"
+                            android:text="@string/celsius"
+                            android:textSize="40dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/halfRight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/imgViewIcon"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="15dp" />
+
+                        <TextView
+                            android:id="@+id/txtViewDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:layout_weight="1"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/txtViewTemp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="10"
-                                android:textAppearance="@style/TextAppearance.MyApp.Headline1" />
-
-                            <TextView
-                                android:id="@+id/LblUnitMain"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="start"
-                                android:paddingTop="25dp"
-                                android:text="@string/celsius"
-                                android:textSize="40dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/halfRight"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:id="@+id/imgViewIcon"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="15dp" />
-
-                            <TextView
-                                android:id="@+id/txtViewDescription"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:text="@string/description"
-                                android:textAlignment="center"
-                                android:textSize="18sp" />
-
-                        </LinearLayout>
+                            android:gravity="center"
+                            android:text="@string/description"
+                            android:textAlignment="center"
+                            android:textSize="18sp" />
 
                     </LinearLayout>
+
                 </LinearLayout>
+            </LinearLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardViewExtraData"
             android:layout_width="match_parent"
@@ -216,7 +217,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="80dp"/>
+                android:paddingTop="80dp" />
         </com.google.android.material.appbar.AppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -224,20 +225,20 @@
         android:id="@+id/progressBarLoadingContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
 
-        <com.arlib.floatingsearchview.FloatingSearchView
-            android:id="@+id/floating_search_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:floatingSearch_searchHint="@string/search_hint"
-            app:floatingSearch_suggestionsListAnimDuration="250"
-            app:floatingSearch_showSearchKey="true"
-            app:floatingSearch_close_search_on_keyboard_dismiss="false"
-            app:floatingSearch_leftActionMode="showSearch"
-            app:floatingSearch_searchBarMarginLeft="8dp"
-            app:floatingSearch_searchBarMarginRight="8dp"
-            app:floatingSearch_searchBarMarginTop="12dp"/>
+    <com.arlib.floatingsearchview.FloatingSearchView
+        android:id="@+id/floating_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:floatingSearch_close_search_on_keyboard_dismiss="false"
+        app:floatingSearch_leftActionMode="showSearch"
+        app:floatingSearch_searchBarMarginLeft="8dp"
+        app:floatingSearch_searchBarMarginRight="8dp"
+        app:floatingSearch_searchBarMarginTop="12dp"
+        app:floatingSearch_searchHint="@string/search_hint"
+        app:floatingSearch_showSearchKey="true"
+        app:floatingSearch_suggestionsListAnimDuration="250" />
 </RelativeLayout>

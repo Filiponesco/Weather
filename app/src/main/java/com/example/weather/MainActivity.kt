@@ -26,9 +26,12 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.os.Build
 import android.os.Parcelable
 import android.provider.Settings
 import android.view.View
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import kotlin.concurrent.thread
 
@@ -123,14 +126,16 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object: Callback<Json>{
 
             override fun onFailure(call: Call<Json>, t: Throwable) {
-                Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_LONG).show()
+                //Toast.makeText(this@MainActivity, messageFailureApi, Toast.LENGTH_LONG).show()
+                Snackbar.make(relativeLayoutAll, R.string.failureAPI, Snackbar.LENGTH_LONG).show()
                 Log.e("ApiFailure", t.message)
                 changeVisibleUI(false)
             }
 
             override fun onResponse(call: Call<Json>, response: Response<Json>) {
                 if(!response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, messageResponseNoSuccessful, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@MainActivity, messageResponseNoSuccessful, Toast.LENGTH_LONG).show()
+                    Snackbar.make(relativeLayoutAll, R.string.responseNoSuccessful, Snackbar.LENGTH_LONG).show()
                     Log.e("ApiNoSuccessful", response.code().toString())
                     return
                 }
@@ -157,8 +162,6 @@ class MainActivity : AppCompatActivity() {
         const val URLOpenWeather: String = "http://api.openweathermap.org/"
         const val API_KEY: String = "2c3a4150c327f165dd4e954b18ca56bf"
         const val URLIcon = "http://openweathermap.org/img/wn/"
-        const val messageFailureApi = "Coś poszło nie tak, włącz internet"
-        const val messageResponseNoSuccessful = "Nie znaleziono takiego miasta."
         const val celcius = "°C"
         const val pascal = "hPa"
         const val NameCityOnStart = "katowice,pl"

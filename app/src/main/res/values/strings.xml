@@ -1,16 +1,14 @@
 <resources>
     <string name="app_name">Weather</string>
-    <string name="hint_editTxtCity">Nazwa miasta</string>
     <string name="feels_like">Oczuwalna: </string>
     <string name="description">Bardzo długi opis pogody</string>
     <string name="date">Data</string>
     <string name="sunrise">Wschód: </string>
     <string name="sunset">Zachód: </string>
     <string name="pressure">Ciśnienie: </string>
-    <string name="app_label">Wyszukiwanie</string>
     <string name="search_hint">Wyszukaj</string>
-    <string name="failureAPI">Coś poszło nie tak</string>
-    <string name="responseNoSuccessful">Brak odpowiedzi. Kod: </string>
+    <string name="failureAPI">Coś poszło nie tak, sprawdź dostęp do internetu</string>
+    <string name="responseNoSuccessful">Nie znaleziono takiego miasta</string>
     <string name="celsius">°C</string>
     <string name="pascal">hPa</string>
     <string name="titleCard">Aktualne dane</string>
