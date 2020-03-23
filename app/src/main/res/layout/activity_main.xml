@@ -55,7 +55,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="10"
-                            android:textAppearance="@style/TextAppearance.MyApp.Headline1" />
+                            android:textAppearance="@style/TextAppearance.WeatherApp.MainTemperature" />
 
                         <TextView
                             android:id="@+id/LblUnitMain"
