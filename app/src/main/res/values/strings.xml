@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather</string>
+    <string name="app_name">Pogoda</string>
     <string name="feels_like">Oczuwalna: </string>
     <string name="description">Bardzo długi opis pogody</string>
     <string name="date">Data</string>
